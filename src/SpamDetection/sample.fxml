@@ -1,0 +1,28 @@
+<?import javafx.scene.control.TableView?>
+<?import java.net.URL?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.layout.VBox?>
+
+<?import javafx.geometry.Insets?>
+<VBox fx:id="container" fx:controller="SpamDetection.Controller" xmlns:fx="http://javafx.com/fxml" >
+    <TableView fx:id="table" prefHeight="1000">
+        <columns>
+            <TableColumn fx:id="fileName" text="File Name" />
+            <TableColumn fx:id="actualClass" text="Actual Class" />
+            <TableColumn fx:id="spamProbability" text="Spam Probability" />
+        </columns>
+        <columnResizePolicy>
+            <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+        </columnResizePolicy>
+        <stylesheets>
+            <URL value="@main.css"/>
+        </stylesheets>
+        <VBox.margin>
+            <Insets top="10" left="10" right="10"/>
+        </VBox.margin>
+        <padding>
+            <Insets top="0" right="0" bottom="0" left="0" />
+        </padding>
+    </TableView>
+</VBox>
+
