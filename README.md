@@ -27,7 +27,7 @@ An application to detect spam using Naive Bayes spam filtering
   
   ![Equation](https://latex.codecogs.com/svg.latex?Pr'(S|W_i)=&space;\frac{s&space;\cdot&space;Pr(S)&space;&plus;&space;n&space;\cdot&space;Pr(S|W_i)}{s&plus;n})
 
-  Where ![Equation](https://latex.codecogs.com/svg.latex?Pr(S)&space;=&space;0.5), ![Equation](https://latex.codecogs.com/svg.latex?s&space;=&space;4) and ![Equation](https://latex.codecogs.com/svg.latex?n&space;=&space;) number of files that have $W_i$
+  Where <img src="https://render.githubusercontent.com/render/math?math=Pr(S) = 0.5">, ![Equation](https://latex.codecogs.com/svg.latex?s&space;=&space;4) and ![Equation](https://latex.codecogs.com/svg.latex?n&space;=&space;) number of files that have ![Equation](https://latex.codecogs.com/svg.latex?W_i)
 #### Stop words (Improved detection):
 Does not evaluate stop words specified in `stopwords.txt`,
 
