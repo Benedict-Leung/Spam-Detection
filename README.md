@@ -40,9 +40,14 @@ Stop words like "a", "the", or "is" provide little to no context to if the file 
 - JDK 15.X.X+
 - JavaFX 15.X.X+
 
+### Clone
+> git clone https://github.com/Benedict-Leung/CSCI2020_Assignment1
+
+### Edit Configurations
 Make sure to add the JavaFX library (`File -> Project Structure -> Libraries`) and add VM options (`Run -> Edit Configurations`) to IntelliJ
 
 (VM options: `--module-path /path/to/javafx/sdk --add-modules javafx.controls,javafx.fxml`)
+
 
 # Reference
 - https://www.jetbrains.com/help/idea/javafx.html#create-project - Reference to running JavaFX projects on IntelliJ
