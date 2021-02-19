@@ -20,7 +20,7 @@ public class Main extends Application {
         primaryStage.setTitle("Spam Detector");
         primaryStage.setResizable(false);
         root.getStylesheets().add("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700"); // Load font
-        primaryStage.setScene(new Scene(root, 800, 675));
+        primaryStage.setScene(new Scene(root, 770, 675));
         primaryStage.show();
 
         controller.init(primaryStage);

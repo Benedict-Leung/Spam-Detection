@@ -33,7 +33,9 @@ public class Controller {
     @FXML public TableView table;
     @FXML public TableColumn<TestFile, String> fileName, actualClass, spamProbability;
     @FXML public VBox container;
-    double accuracy = 0, finalAccuracy = 0, precision = 0, finalPrecision = 0, frameIndex = 0;
+    double accuracy = 0, finalAccuracy = 0, precision = 0, finalPrecision = 0;
+    double trainDistribution = 0, finalTrainDistribution = 0, testDistribution = 0, finalTestDistribution = 0;
+    double frameIndex = 0;
     ExecutorService executorService = Executors.newFixedThreadPool(1);
 
     /**
@@ -82,16 +84,20 @@ public class Controller {
         // On success, show statistics
         detection.setOnSucceeded(succeededEvent -> {
             // Calculate accuracy and precision
-            finalAccuracy = (double) (detection.truePositives + detection.trueNegatives) / (detection.testHamFolder.listFiles().length + detection.testSpamFolder.listFiles().length);
+            finalAccuracy = (double) (detection.truePositives + detection.trueNegatives) / (detection.getTestHamLength() + detection.getTestSpamLength());
             finalPrecision = (double) detection.truePositives / (detection.truePositives + detection.falsePositive);
+            finalTrainDistribution = (double) detection.getTrainSpamLength() / (detection.getTrainHamLength() + detection.getTrainSpamLength());
+            finalTestDistribution = (double) detection.getTestSpamLength() / (detection.getTestHamLength() + detection.getTestSpamLength());
 
-            // Animation for showing the accuracy and precision
+            // Animation for showing the statistics
             Timeline timeline = new Timeline();
             timeline.setCycleCount(40);
             EventHandler<ActionEvent> eventHandler = event -> {
                 gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight()); // Clear the canvas
                 accuracy += (finalAccuracy * 100 - accuracy) / (40 - frameIndex); // Slowly increment the display accuracy to the final accuracy
                 precision += (finalPrecision * 100 - precision) / (40 - frameIndex); // Slowly increment the display precision to the final precision
+                trainDistribution += (finalTrainDistribution * 100 - trainDistribution) / (40 - frameIndex); // Slowly increment the display train distribution to the final train distribution
+                testDistribution += (finalTestDistribution * 100 - testDistribution) / (40 - frameIndex); // Slowly increment the display test distribution to the final test distribution
                 frameIndex++; // Increment the frame index
 
                 // Draw background for the statistics
@@ -99,6 +105,7 @@ public class Controller {
                 gc.fillRoundRect(10, 10, 180, 180, 10, 10);
                 gc.fillRoundRect(200, 10, 180, 180, 10, 10);
                 gc.fillRoundRect(390, 10, 180, 180, 10, 10);
+                gc.fillRoundRect(580, 10, 180, 180, 10, 10);
 
                 // Display accuracy, precision and title of the statistics
                 gc.setFill(Color.web("#E75D2A"));
@@ -106,7 +113,8 @@ public class Controller {
                 gc.fillText(String.format("%.1f", precision) + "%", 292, 114);
                 gc.fillText("Accuracy", 100,30);
                 gc.fillText("Precision", 290,30);
-                gc.fillText("Summary", 480,30);
+                gc.fillText("Train Data Distribution", 480,30);
+                gc.fillText("Test Data Distribution", 670,30);
 
                 // Draw full gray circle
                 gc.setStroke(Color.web("#F4F4F4"));
@@ -120,12 +128,17 @@ public class Controller {
                 gc.strokeArc(50, 65, 100, 100, 90, accuracy * 3.6, ArcType.OPEN);
                 gc.strokeArc(240, 65, 100, 100, 90, precision * 3.6, ArcType.OPEN);
 
-                // Display summary
-                gc.fillText("Spam words: " + detection.countSpamWords(), 480, 60);
-                gc.fillText("Ham words: " + detection.countHamWords(), 480, 80);
-                gc.fillText("Common words: " + detection.getCommonWords(), 480, 100);
-                gc.fillText("# of train spam files: " + detection.trainSpamFolder.listFiles().length, 480, 120);
-                gc.fillText("# of train ham files: " + (detection.trainHamFolder.listFiles().length + detection.trainHamFolder2.listFiles().length), 480, 140);
+                // Display distribution
+                gc.strokeOval(430, 65, 100, 100);
+                gc.fillText("H: " + String.format("%.1f", 100 - trainDistribution) + "%",480, 105);
+                gc.strokeOval(620, 65, 100, 100);
+                gc.fillText("H: " + String.format("%.1f", 100 - testDistribution) + "%",670, 105);
+                gc.setFill(Color.web("#E75D2A"));
+                gc.setStroke(Color.web("#E75D2A"));
+                gc.strokeArc(430, 65, 100, 100, 90, trainDistribution * 3.6, ArcType.OPEN);
+                gc.fillText("S: " + String.format("%.1f", trainDistribution) + "%",480, 125);
+                gc.strokeArc(620, 65, 100, 100, 90, testDistribution * 3.6, ArcType.OPEN);
+                gc.fillText("S: " + String.format("%.1f", testDistribution) + "%",670, 125);
             };
             KeyFrame keyFrame = new KeyFrame(Duration.millis(50), eventHandler);
             timeline.getKeyFrames().add(keyFrame);

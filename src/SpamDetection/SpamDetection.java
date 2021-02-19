@@ -51,8 +51,9 @@ public class SpamDetection extends Task {
         testSpamFolder = new File(mainDirectory.getPath() + "/test/spam");
 
         // Calculate spam probability
+        int trainSpamLength = getTrainSpamLength(), trainHamLength = getTrainHamLength();
         for (File file : testHamFolder.listFiles()) {
-            double spamProbability = getSpamProbability(file, trainSpamFolder.listFiles().length, trainHamFolder.listFiles().length + trainHamFolder2.listFiles().length);
+            double spamProbability = getSpamProbability(file, trainSpamLength, trainHamLength);
             TestFile testFile = new TestFile(file.getName(), spamProbability, "Ham");
             if (spamProbability < 0.5) {
                 trueNegatives++;
@@ -63,7 +64,7 @@ public class SpamDetection extends Task {
         }
 
         for (File file : testSpamFolder.listFiles()) {
-            double spamProbability = getSpamProbability(file, trainSpamFolder.listFiles().length, trainHamFolder.listFiles().length + trainHamFolder2.listFiles().length);
+            double spamProbability = getSpamProbability(file, trainSpamLength, trainHamLength);
             TestFile testFile = new TestFile(file.getName(), spamProbability, "Spam");
             if (spamProbability >= 0.5) {
                 truePositives++;
@@ -94,12 +95,16 @@ public class SpamDetection extends Task {
                 double spamFreq = (trainSpamFreq.get(word) == null) ? 0 : trainSpamFreq.get(word);
                 double hamFreq = (trainHamFreq.get(word) == null) ? 0 : trainHamFreq.get(word);
 
-                // Ignore word if it doesn't occur during training phase
+                // Check if the word appears in training phase
                 if (spamFreq != 0 && hamFreq != 0) {
                     // Calculate probability, Pr(S|W)
                     double spamContainsWord = spamFreq / spamLength;
                     double hamContainsWord = hamFreq / hamLength;
                     double spamProbability = spamContainsWord / (spamContainsWord + hamContainsWord);
+                    spamProbability = (2 + (spamFreq + hamFreq) * spamProbability) / (4 + spamFreq + hamFreq); // Corrected probability for rarity of the word
+                    n += Math.log(1 - spamProbability) - Math.log(spamProbability);
+                } else {
+                    double spamProbability = 0.5;
                     n += Math.log(1 - spamProbability) - Math.log(spamProbability);
                 }
             }
@@ -152,39 +157,39 @@ public class SpamDetection extends Task {
     }
 
     /**
-     * Gets common words between spam and ham files.
+     * Gets the number train spam files.
      *
-     * @return the number of common words
+     * @return the number train spam files
      */
-    public int getCommonWords() {
-        int count = 0;
-        Set<String> words = trainHamFreq.keySet();
-
-        for (String key : words) {
-            // Check if the ham word exists in spam
-            if (trainSpamFreq.get(key) != null) {
-                count++;
-            }
-        }
-        return count;
+    public int getTrainSpamLength() {
+        return trainSpamFolder.listFiles().length;
     }
 
     /**
-     * Get number of spam words.
+     * Gets the number train ham files.
      *
-     * @return number of spam words
+     * @return the number train ham files
      */
-    public int countSpamWords() {
-        return trainSpamFreq.size();
+    public int getTrainHamLength() {
+        return trainHamFolder.listFiles().length + trainHamFolder2.listFiles().length;
     }
 
     /**
-     * Get number of ham words.
+     * Gets the number test spam files.
      *
-     * @return number of ham words
+     * @return the number test spam files
      */
-    public int countHamWords() {
-        return trainHamFreq.size();
+    public int getTestSpamLength() {
+        return testSpamFolder.listFiles().length;
+    }
+
+    /**
+     * Gets the number test ham files.
+     *
+     * @return the number test ham files
+     */
+    public int getTestHamLength() {
+        return testHamFolder.listFiles().length;
     }
 
     @Override
