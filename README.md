@@ -41,7 +41,7 @@ Stop words like "a", "the", or "is" provide little to no context to if the file 
 - JavaFX 15.X.X+
 
 ### Clone
-> git clone https://github.com/Benedict-Leung/CSCI2020_Assignment1
+     git clone https://github.com/Benedict-Leung/CSCI2020_Assignment1
 
 ### Edit Configurations
 Make sure to add the JavaFX library (`File -> Project Structure -> Libraries`) and add VM options (`Run -> Edit Configurations`) to IntelliJ
