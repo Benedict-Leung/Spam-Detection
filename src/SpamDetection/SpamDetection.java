@@ -9,8 +9,8 @@ import java.util.*;
 /**
  * The Spam detection.
  */
-public class SpamDetection extends Task {
-    private final TableView table;
+public class SpamDetection extends Task<Object> {
+    private final TableView<TestFile> table;
     private HashMap<String, Integer> trainHamFreq = new HashMap<>(), trainSpamFreq = new HashMap<>();
     ArrayList<String> stopWords = new ArrayList<>();
     int truePositives = 0, trueNegatives = 0, falsePositive = 0;
@@ -22,7 +22,7 @@ public class SpamDetection extends Task {
      * @param mainDirectory the main directory
      * @param table         the table
      */
-    public SpamDetection(File mainDirectory, TableView table) {
+    public SpamDetection(File mainDirectory, TableView<TestFile> table) {
         this.mainDirectory = mainDirectory;
         this.table = table;
     }
@@ -55,6 +55,8 @@ public class SpamDetection extends Task {
         for (File file : testHamFolder.listFiles()) {
             double spamProbability = getSpamProbability(file, trainSpamLength, trainHamLength);
             TestFile testFile = new TestFile(file.getName(), spamProbability, "Ham");
+
+            // Categorize ham files according if the detection detects correctly
             if (spamProbability < 0.5) {
                 trueNegatives++;
             } else {
@@ -66,6 +68,8 @@ public class SpamDetection extends Task {
         for (File file : testSpamFolder.listFiles()) {
             double spamProbability = getSpamProbability(file, trainSpamLength, trainHamLength);
             TestFile testFile = new TestFile(file.getName(), spamProbability, "Spam");
+
+            // Categorize spam files according if the detection detects correctly
             if (spamProbability >= 0.5) {
                 truePositives++;
             }
@@ -98,9 +102,9 @@ public class SpamDetection extends Task {
                 // Check if the word appears in training phase
                 if (spamFreq != 0 && hamFreq != 0) {
                     // Calculate probability, Pr(S|W)
-                    double spamContainsWord = spamFreq / spamLength;
-                    double hamContainsWord = hamFreq / hamLength;
-                    double spamProbability = spamContainsWord / (spamContainsWord + hamContainsWord);
+                    double spamContainsWord = spamFreq / spamLength; // Pr(W|S)
+                    double hamContainsWord = hamFreq / hamLength; // Pr (W|H)
+                    double spamProbability = spamContainsWord / (spamContainsWord + hamContainsWord); // Pr(W|S) / (Pr(W|S) + Pr(W|H))
                     spamProbability = (2 + (spamFreq + hamFreq) * spamProbability) / (4 + spamFreq + hamFreq); // Corrected probability for rarity of the word
                     n += Math.log(1 - spamProbability) - Math.log(spamProbability);
                 } else {
@@ -109,7 +113,7 @@ public class SpamDetection extends Task {
                 }
             }
         }
-        return 1 / (1 + Math.pow(Math.E, n));
+        return 1 / (1 + Math.pow(Math.E, n)); // Pr(S|F)
     }
 
     /**

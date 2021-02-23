@@ -30,7 +30,7 @@ import java.util.concurrent.Executors;
  * The Controller.
  */
 public class Controller {
-    @FXML public TableView table;
+    @FXML public TableView<TestFile> table;
     @FXML public TableColumn<TestFile, String> fileName, actualClass, spamProbability;
     @FXML public VBox container;
     double accuracy = 0, finalAccuracy = 0, precision = 0, finalPrecision = 0;
@@ -83,7 +83,7 @@ public class Controller {
 
         // On success, show statistics
         detection.setOnSucceeded(succeededEvent -> {
-            // Calculate accuracy and precision
+            // Calculate accuracy, precision and distribution
             finalAccuracy = (double) (detection.truePositives + detection.trueNegatives) / (detection.getTestHamLength() + detection.getTestSpamLength());
             finalPrecision = (double) detection.truePositives / (detection.truePositives + detection.falsePositive);
             finalTrainDistribution = (double) detection.getTrainSpamLength() / (detection.getTrainHamLength() + detection.getTrainSpamLength());
@@ -100,7 +100,7 @@ public class Controller {
                 testDistribution += (finalTestDistribution * 100 - testDistribution) / (40 - frameIndex); // Slowly increment the display test distribution to the final test distribution
                 frameIndex++; // Increment the frame index
 
-                // Draw background for the statistics
+                // Draw white background for the statistics
                 gc.setFill(Color.web("#FFFFFF"));
                 gc.fillRoundRect(10, 10, 180, 180, 10, 10);
                 gc.fillRoundRect(200, 10, 180, 180, 10, 10);
