@@ -1,4 +1,4 @@
-# CSCI2020 Assignment 1
+# File Sharing System
 
 An application to detect spam using Naive Bayes spam filtering and stop words
 
