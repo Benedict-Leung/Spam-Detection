@@ -1,4 +1,4 @@
-# File Sharing System
+# Spam Detection
 
 An application to detect spam using Naive Bayes spam filtering and stop words
 
